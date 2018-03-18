@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Chuck Norris Facts</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        body{
+
+            background-color: rgb(195, 191, 198);
+            
+        }
+
+        .history-container {
+
+            text-align: center;
+            background-color: rgb(179, 173, 173);
+            margin-left: 650px;
+            margin-top: 50px;
+            width: 600px;
+            overflow-y: auto;
+            height: 280px;
+            position: absolute;
+            z-index: 100px;
+            border-radius: 25px;
+        }
+
+        #search-output {
+
+            width: 350px;
+        }
+
+        #category-result {
+
+            width: 350px;
+        }
+
+        .highlight{
+
+            background-color: yellow;
+        }
+
+        .main-header{
+
+            background-color: rgb(43, 41, 41);
+            text-align: center;
+            border-radius: 15px;
+        }
+        .quote p {
+            color: whitesmoke;
+            float: right;
+            margin-top: 100px;
+            font-size: 20px;
+            position: relative;
+            right: 100px;
+        }
+
+        .main-header h1 {
+
+            float: left;
+            position: relative;
+            left: 30px;
+            color: rgb(189, 139, 124);
+        }
+        .main-header img{
+
+            width: 300px;
+            height: 200px;
+            text-align: center;
+            margin-right: 100px;
+            border-radius: 25px;
+            
+        }
+        .userInputs{
+
+            background-color: rgb(77, 65, 61);
+            width: 510px;
+            color: rgb(247, 243, 243);
+            border-radius: 25px;
+            margin-top: 50px;
+            overflow-y: auto;
+            height: 400px;
+            position: absolute;
+            
+        }
+
+        .userInputs input[type=text] {
+
+            -webkit-transition: 0.5s;
+            transition: 0.5s;
+            border: 3px solid rgb(24, 22, 22);
+            width: 150px;
+            height: 15px;
+            margin: 8px 0;
+        }
+
+        .userInputs input[type=text]:focus {
+
+            border: 3px solid rgb(232, 146, 70);
+        }
+
+        .userInputs h2{
+
+            margin-left: 50px;
+            padding-right: 10px;
+
+        }
+
+        .userInputs button {
+
+
+            background-color: rgb(106, 67, 43);
+            border-radius: 10px;
+            border: none;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            cursor: pointer;
+            margin-left: 180px;
+
+        }
+        .userInputs button:hover {
+
+            background-color: gray;
+
+        }
+
+
+        .style-categories{
+
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            overflow: hidden;
+            padding-right: 10px;
+            background: #e1dede url("https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-arrow-down-20.png") no-repeat 90% 20%;
+            
+        }
+
+        .style-categories select{
+
+            color: rgb(50, 48, 47);
+            border-radius: 20px;
+            padding: 10px 15px;
+            width: 160%;
+            border: none;
+            background: transparent;
+            
+        }
+
+        .style-categories select, option {
+
+
+            font-size: 15px;
+            color: black;
+        }
+
+        
+        
+
+       
+        
+    </style>
+</head>
+
+<body>
+    <div id="chuck" v-cloak>
+        
+        <div class="main-header">
+
+            
+                <h1><u>{{appName}}</u></h1>
+
+                <div class="quote">
+
+                        <p> <i>"Because it can't get anymore factual than this"</i></p>
+
+                </div>
+
+                <img src="http://i0.kym-cdn.com/photos/images/original/001/345/499/0f6.jpg">
+
+
+        </div>
+        
+        <div class="body-container">
+
+            <div class="userInputs">
+
+
+                    <!-- Populate Categories in DropDown List -->
+
+                <h2 style="display:inline-block">Get a Random fact from </h2>
+
+                <div class="style-categories">
+
+                        <select id="category-options">
+                                <option value="any" >any</option>
+                                <option v-for="c in getCategories" value="categories">{{c}}</option>
+                                
+                        </select>
+
+
+                </div>
+
+
+                <!-- Output upon choosing a specific category -->
+
+                <button v-on:click="getSelectedCategory">Get Fact!</button>
+
+                <div class="category-main" v-if="categoryResult">
+
+                        <ol>
+                                <h2>Chuck Norris Fact: </h2>
+                                <li id="category-result" >{{categoryResult}}</li>
+                        </ol>
+
+
+                </div>
+
+
+                <!-- 
+                    ============================================================================
+                -->
+
+                <br>
+
+                <hr>
+
+                <h2 style="display:inline-block"> Search for a Fact: </h2>
+                <input type="text" id="search">
+                <button v-on:click="searchCategory">Search Fact</button>
+
+                <div class="highlighted-output" v-if="getHighlightedSearchValue.length">
+
+                        <ol>
+                                <h2>Search Results: </h2>
+                                <li v-for="search of getHighlightedSearchValue" id="search-output"><span v-html="search"></span></li>
+                        </ol>
+
+
+                </div>
+
+
+            </div>
+
+        
+
+            <div v-if="history.length" class="history-container">
+
+                <ol>
+                    
+                            <h2> History of Searches:  </h2>
+                            <li v-for="h of history">{{h}} </li>    
+
+                </ol>
+
+
+            </div>
+
+
+
+        </div>
+
+        
+        <!-- <p id="demo"></p> -->
+        
+        
+    </div>
+
+    <script type="text/javascript" src="https://unpkg.com/vue"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="chuck_norris_app.js"></script>
+
+</body>
+
+</html>
