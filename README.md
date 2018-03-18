@@ -7,3 +7,5 @@ Languages: HTML, CSS, Javascript
 Libraries: JQuery
 
 Frameworks: Vue
+
+API: https://api.chucknorris.io/
